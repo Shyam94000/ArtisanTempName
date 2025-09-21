@@ -1,5 +1,4 @@
-#Artisan Collective
-
+Artisan Collective
 Artisan Collective is a full-stack e-commerce platform designed to empower traditional artisans by connecting them directly with a global audience. The project aims to bridge the gap between skilled craftspeople and conscious consumers, while leveraging technology to preserve and promote cultural heritage.
 
 Key Features 🚀
