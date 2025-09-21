@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Join as Artisan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Poppins',sans-serif; color:#333; background: url('https://images.meesho.com/images/products/357944125/zpuxl_512.webp?width=512') center/cover fixed; }
+        .overlay { max-width:600px; margin:40px auto; background:rgba(255,255,255,0.85); backdrop-filter:blur(8px); border-radius:12px; padding:2rem; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
+        h2 { text-align:center; margin-bottom:1.5rem; font-weight:600; color:#b22222; }
+        .form-group { margin-bottom:1.2rem; }
+        label { display:block; font-weight:500; margin-bottom:0.3rem; }
+        input, textarea, button { width:100%; padding:0.7rem; border:1px solid #ccc; border-radius:6px; font-size:1rem; font-family:'Poppins',sans-serif; }
+        input[type="file"] { padding: 0.4rem; }
+        textarea { resize:vertical; min-height:80px; }
+        .btn { margin-top:0.8rem; padding:0.8rem; font-weight:600; border:none; border-radius:6px; cursor:pointer; transition:all 0.3s; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-save { background:#b22222; color:#fff; }
+        .btn-save:hover:not(:disabled) { background:#a01f1f; }
+        .btn-camera { background:#0056b3; color:#fff; }
+        .btn-camera:hover { background:#004094; }
+        .btn-voice { background:#28a745; color:#fff; width:auto; display:inline-block; margin-left:0.5rem; min-width:120px; }
+        .btn-voice:hover { background:#1e7e34; }
+        .btn-voice.listening { background:#dc3545; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .voice-input-row { display:flex; align-items:end; gap:0.5rem; }
+        .voice-input-row textarea { flex:1; }
+        #story-output { margin-top:1rem; padding:1rem; background:rgba(255,255,255,0.8); border-radius:6px; min-height:80px; font-style:italic; display:none; }
+        .language-buttons { display:flex; gap:0.5rem; margin-top:0.5rem; display:none; }
+        .lang-btn { padding:0.4rem 0.8rem; font-size:0.9rem; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+        .lang-btn:hover { background:#0056b3; }
+        .lang-btn.active { background:#28a745; }
+        #video-widget { margin-top:1.5rem; text-align:center; }
+        video { width:100%; max-height:320px; border-radius:6px; display:none; }
+        #finalize-btn, #recapture-btn { display:none; }
+        #img-preview-container { text-align: center; margin-bottom: 1rem; }
+        #img-preview { max-width: 150px; max-height: 150px; border-radius: 50%; border: 3px solid #b22222; display: none; margin: 0 auto; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <h2>Join as Artisan</h2>
+    <form id="artisan-form" autocomplete="off">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Choose a unique username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Create a secure password" required>
+        </div>
+        <hr style="margin-bottom: 1.2rem; border-top: 1px solid #ccc; border-bottom: none;">
+
+        <div class="form-group">
+            <label for="name">Your Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+            <label for="shop">Shop Name</label>
+            <input type="text" id="shop" name="shop" placeholder="Enter your shop name" required>
+        </div>
+        <div class="form-group">
+            <label for="profileImage">Profile Picture</label>
+            <input type="file" id="profileImage" name="profileImage" accept="image/*">
+            <div id="img-preview-container" style="margin-top: 10px;">
+                <img id="img-preview" src="#" alt="Image Preview"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" placeholder="Enter your full address" required></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="contactNumber">Contact Number</label>
+            <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your 10-digit phone number" pattern="[0-9]{10}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="geo">Geolocation</label>
+            <input type="text" id="geo" name="geo" placeholder="Click to set your location" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="story-input">Your Short Story (1-2 lines)</label>
+            <div class="voice-input-row">
+                <textarea id="story-input" name="story_input" placeholder="Write or speak about your craft..." required></textarea>
+                <button type="button" class="btn btn-voice" id="voice-btn">🎤 Start</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-save" id="generate-button">Generate Full Story</button>
+        <div id="story-output"></div>
+        <div class="language-buttons" id="lang-buttons">
+            <button type="button" class="lang-btn active" data-lang="en">English</button>
+            <button type="button" class="lang-btn" data-lang="hi">Hindi</button>
+            <button type="button" class="lang-btn" data-lang="ta">Tamil</button>
+        </div>
+
+        <div id="video-widget">
+            <label>Workshop Video (Optional)</label>
+            <video id="preview" muted playsinline></video>
+            <button type="button" class="btn btn-camera" id="start-camera">Use Camera</button>
+            <button type="button" class="btn btn-camera" id="finalize-btn">Finalize Video</button>
+            <button type="button" class="btn btn-camera" id="recapture-btn">Recapture</button>
+        </div>
+
+        <button type="submit" class="btn btn-save">Create Account</button>
+    </form>
+</div>
+
+<script>
+    // Geolocation
+    document.getElementById('geo').addEventListener('click', () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(p => {
+                document.getElementById('geo').value = `${p.coords.latitude.toFixed(5)}, ${p.coords.longitude.toFixed(5)}`;
+            }, ()=> document.getElementById('geo').value='Permission denied');
+        } else document.getElementById('geo').value='Not supported';
+    });
+
+    // Voice input for story
+    let recognition;
+    let isListening = false;
+    const voiceBtn = document.getElementById('voice-btn');
+    const storyInput = document.getElementById('story-input');
+
+    voiceBtn.addEventListener('click', () => {
+        if (!isListening) startListening();
+        else stopListening();
+    });
+
+    function startListening() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            return alert('Voice recognition not supported. Please use Chrome or Edge.');
+        }
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        recognition.onstart = () => { isListening = true; voiceBtn.textContent = '🔴 Stop'; voiceBtn.classList.add('listening'); };
+        recognition.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + ' ';
+            }
+            storyInput.value += finalTranscript;
+        };
+        recognition.onend = resetVoiceButton;
+        recognition.onerror = (event) => { console.error('Voice recognition error:', event.error); resetVoiceButton(); };
+        recognition.start();
+    }
+
+    function stopListening() { if (recognition && isListening) recognition.stop(); }
+    function resetVoiceButton() { isListening = false; voiceBtn.textContent = '🎤 Start'; voiceBtn.classList.remove('listening'); }
+
+    // Story generation with language support
+    const storyTemplates = {
+        en: (input) => `"${input}"<br><br>This brief introduction reflects a legacy of passion and skill, where every creation honors centuries-old tradition and craftsmanship. Each piece tells a story of heritage, dedication, and the timeless art passed down through generations.`,
+        hi: (input) => `"${input}"<br><br>यह संक्षिप्त परिचय जुनून और कौशल की विरासत को दर्शाता है, जहां हर रचना सदियों पुरानी परंपरा और शिल्पकारी का सम्मान करती है। हर टुकड़ा विरासत, समर्पण और पीढ़ियों से चली आ रही कालातीत कला की कहानी कहता है।`,
+        ta: (input) => `"${input}"<br><br>இந்த சுருக்கமான அறிமுகம் ஆர்வம் மற்றும் திறமையின் பாரம்பரியத்தை பிரதிபலிக்கிறது, அங்கு ஒவ்வொரு படைப்பும் நூற்றாண்டுகள் பழமையான பாரம்பரியம் மற்றும் கைவினைத்திறனை மதிக்கிறது. ஒவ்வொரு துண்டும் பாரம்பரியம், அர்ப்பணிப்பு மற்றும் தலைமுறைகளாக கடத்தப்பட்ட காலமற்ற கலையின் கதையைச் சொல்கிறது.`
+    };
+    let currentStoryInput = '';
+
+    document.getElementById('generate-button').addEventListener('click', () => {
+        const input = storyInput.value.trim();
+        if(!input) return alert('Please enter or speak your short story.');
+        currentStoryInput = input;
+        const output = storyTemplates.en(input);
+        const storyDiv = document.getElementById('story-output');
+        storyDiv.innerHTML = output;
+        storyDiv.style.display = 'block';
+        document.getElementById('lang-buttons').style.display = 'flex';
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('[data-lang="en"]').classList.add('active');
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!currentStoryInput) return;
+            const lang = btn.dataset.lang;
+            document.getElementById('story-output').innerHTML = storyTemplates[lang](currentStoryInput);
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Video capture functionality
+    const startBtn = document.getElementById('start-camera'),
+        finalizeBtn = document.getElementById('finalize-btn'),
+        recaptureBtn = document.getElementById('recapture-btn'),
+        preview = document.getElementById('preview');
+    let stream, recorder, chunks, recordedBlob = null;
+
+    startBtn.onclick = async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+            preview.srcObject = stream;
+            preview.style.display = 'block';
+            preview.play();
+            recordedBlob = null;
+            chunks = [];
+            recorder = new MediaRecorder(stream);
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.start();
+            finalizeBtn.style.display = 'inline-block';
+            recaptureBtn.style.display = 'inline-block';
+            startBtn.style.display = 'none';
+        } catch (error) { alert('Camera access denied or not available.'); }
+    };
+
+    finalizeBtn.onclick = () => {
+        if (recorder && recorder.state === "recording") {
+            recorder.stop();
+            recorder.onstop = () => {
+                recordedBlob = new Blob(chunks, { type: 'video/mp4' });
+                preview.srcObject = null;
+                preview.src = URL.createObjectURL(recordedBlob);
+                if(stream) stream.getTracks().forEach(t => t.stop());
+            };
+        }
+        finalizeBtn.style.display = 'none';
+        recaptureBtn.style.display = 'none';
+    };
+
+    recaptureBtn.onclick = () => {
+        preview.src = '';
+        preview.style.display = 'none';
+        if(stream) stream.getTracks().forEach(t => t.stop());
+        recordedBlob = null;
+        startBtn.style.display = 'inline-block';
+        finalizeBtn.style.display = 'none';
+        recaptureBtn.style.display = 'none';
+    };
+    
+    // Image Preview Logic
+    document.getElementById('profileImage').addEventListener('change', function(event) {
+        const preview = document.getElementById('img-preview');
+        if (event.target.files && event.target.files[0]) {
+            preview.style.display = 'block';
+            preview.src = URL.createObjectURL(event.target.files[0]);
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+
+    // Form submission logic
+    document.getElementById('artisan-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+        
+        const formData = new FormData(e.target);
+
+        formData.delete('story_input');
+        
+        const storyOutputContent = document.getElementById('story-output').innerText;
+        const storyInputValue = document.getElementById('story-input').value;
+        formData.append('story', storyOutputContent || storyInputValue);
+
+        if (recordedBlob) {
+            formData.append('video', recordedBlob, `workshop_video.mp4`);
+        }
+
+        try {
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json(); 
+            
+            alert(result.message);
+
+            if (response.ok) {
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            console.error('Signup submission error:', error);
+            alert('A network or server error occurred. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account';
+        }
+    });
+</script>
+
+</body>
+</html>

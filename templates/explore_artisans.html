@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Explore Crafts - Artisan Collective</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f5f1eb 0%, #faf6f0 100%); color: #333; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { color: #b22222; font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .search-container { display: flex; justify-content: center; margin-bottom: 2rem; }
+        .search-bar { position: relative; width: 100%; max-width: 600px; }
+        .search-bar input { width: 100%; padding: 1rem 1.5rem; padding-right: 4rem; border: 2px solid #ddd; border-radius: 50px; font-size: 1.1rem; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: 'Poppins', sans-serif; transition: all 0.3s ease; }
+        .search-bar input:focus { outline: none; border-color: #b22222; box-shadow: 0 4px 20px rgba(178,34,34,0.2); }
+        .search-btn { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: #b22222; border: none; border-radius: 50px; width: 45px; height: 45px; color: white; cursor: pointer; transition: background 0.3s ease; }
+        .search-btn:hover { background: #8b1818; }
+        .toggle-container { display: flex; justify-content: center; margin-bottom: 3rem; }
+        .toggle-wrapper { background: white; border-radius: 50px; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; }
+        .toggle-btn { padding: 12px 30px; border: none; border-radius: 50px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; background: transparent; color: #666; }
+        .toggle-btn.active { background: #b22222; color: white; box-shadow: 0 2px 10px rgba(178,34,34,0.3); }
+        .artisan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .artisan-card, .product-card { background: white; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; transition: all 0.3s ease; height: 580px; display: flex; flex-direction: column; }
+        .artisan-card:hover, .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .image-section, .carousel-container { height: 45%; position: relative; overflow: hidden; background-color: #f0eade; }
+        .artisan-image, .carousel-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .artisan-card:hover .artisan-image, .product-card:hover .carousel-img { transform: scale(1.05); }
+        .view-btn { position: absolute; top: 15px; right: 15px; background: rgba(178, 34, 34, 0.9); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); text-decoration: none; }
+        .view-btn:hover { background: rgba(178, 34, 34, 1); transform: scale(1.05); }
+        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(178,34,34,0.8); border: none; color: #fff; font-size: 1.7em; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; z-index: 2; transition: background 0.2s; opacity: 0.82; }
+        .carousel-arrow:hover { background: #8b1818; }
+        .carousel-arrow.left { left: 10px; }
+        .carousel-arrow.right { right: 10px; }
+        .carousel-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
+        .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.3s; }
+        .carousel-dot.active { background: rgba(255,255,255,0.9); }
+        .info-section { height: 55%; padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .shop-name, .product-name { font-size: 1.15rem; font-weight: 700; color: #b22222; margin-bottom: 0.4rem; line-height: 1.2; }
+        .shop-desc, .product-desc { font-size: 0.85rem; color: #666; margin-bottom: 0.6rem; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .artisan-story { font-size: 0.8rem; color: #7a5a2e; font-style: italic; margin-bottom: 0.6rem; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; background: rgba(178, 34, 34, 0.05); padding: 6px 10px; border-radius: 6px; border-left: 3px solid #b22222; min-height: calc(1.3em * 3 + 12px); }
+        .address, .product-price { font-size: 0.8rem; color: #888; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 5px; }
+        .product-price { font-size: 1.1rem; color: #333; font-weight: 600; }
+        .button-container { display: flex; gap: 8px; align-items: center; margin-top: auto; justify-content: center; }
+        .locate-btn { background: transparent; color: #b22222; border: 2px solid #b22222; border-radius: 20px; padding: 6px 14px; font-weight: 500; font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; width: 130px; font-family: 'Poppins', sans-serif; text-decoration: none; text-align: center; }
+        .locate-btn:hover { background: #b22222; color: white; }
+        .locate-btn:disabled { opacity: 0.6; cursor: not-allowed; background: #eee; border-color: #ddd; color: #aaa; }
+        .loading { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #b22222; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .rating-section { display: flex; align-items: center; gap: 8px; margin-bottom: 0.6rem; cursor: pointer; }
+        .stars { color: #f39c12; font-size: 1rem; }
+        .rating-count { font-size: 0.8rem; color: #888; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 15px; width: 90%; max-width: 800px; height: 80%; display: flex; flex-direction: column; }
+        .modal-header { padding: 1rem 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.2rem; font-weight: 600; color: #b22222; }
+        .close { color: #aaa; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
+        .map-container { flex: 1; padding: 1rem; }
+        #map { width: 100%; height: 100%; border-radius: 10px; }
+        .route-info { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 10px 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-weight: 500; z-index: 1000; }
+        .contact-modal-content { padding: 2rem; text-align: center; }
+        .contact-modal-content h3 { font-size: 1.5rem; color: #b22222; margin-bottom: 1rem; }
+        .contact-modal-content p { font-size: 1.1rem; color: #333; margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Explore Crafts</h1>
+            <p>Discover authentic artisans and their beautiful handcrafted products</p>
+        </div>
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search for artisans or products...">
+                <button class="search-btn" onclick="performSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle-wrapper">
+                <button class="toggle-btn active" id="artisansBtn" onclick="showArtisans()">Artisans</button>
+                <button class="toggle-btn" id="productsBtn" onclick="showProducts()">Products</button>
+            </div>
+        </div>
+        <div class="artisan-grid" id="artisanGrid"></div>
+        <div class="artisan-grid" id="productGrid" style="display:none;"></div>
+    </div>
+
+    <div id="mapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Route to Artisan</h3>
+                <span class="close" onclick="closeMapModal()">&times;</span>
+            </div>
+            <div class="map-container">
+                <div id="map"></div>
+                <div id="routeInfo" class="route-info" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; height: auto;">
+            <div class="modal-header">
+                <h3 class="modal-title">Contact Details</h3>
+                <span class="close" onclick="closeContactModal()">&times;</span>
+            </div>
+            <div class="contact-modal-content">
+                <h3 id="modalShopName"></h3>
+                <p id="modalProductDescription" style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;"></p>
+                <p id="modalContactNumber"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+    // --- GLOBAL VARIABLES ---
+    let allArtisans = [];
+    let allProducts = [];
+    let map = null;
+    let currentUserLocation = null;
+    const artisanGrid = document.getElementById('artisanGrid');
+    const productGrid = document.getElementById('productGrid');
+    const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImI5YTBkNTc2Yzc1YjQxNTdiYmQ2MTY2YjNhNDZhZDc0IiwiaCI6Im11cm11cjY0In0="; // Replace with your key
+    const placeholderImages = [ "https://i.pinimg.com/236x/9e/76/0b/9e760b578c958ac4f2b5c381b96eee4f.jpg", "https://thumbs.dreamstime.com/b/assorted-pottery-rustic-wooden-table-various-pieces-handmade-arranged-showcasing-artisanal-craftsmanship-natural-356395426.jpg" ];
+
+    // --- DATA FETCHING & RENDERING ---
+
+    async function fetchAllArtisans() {
+        artisanGrid.innerHTML = `<div class="loading"><div class="spinner"></div>Fetching artisans...</div>`;
+        try {
+            const response = await fetch('/api/artisans');
+            if (!response.ok) throw new Error('Network response was not ok');
+            allArtisans = await response.json();
+            renderArtisans(allArtisans);
+        } catch (error) {
+            console.error('Failed to fetch artisans:', error);
+            artisanGrid.innerHTML = `<div class="loading">Could not load artisans. Please try again later.</div>`;
+        }
+    }
+
+    async function fetchAllProducts() {
+        productGrid.innerHTML = `<div class="loading"><div class="spinner"></div>Fetching products...</div>`;
+        try {
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error('Network response was not ok');
+            allProducts = await response.json();
+            renderProducts(allProducts);
+        } catch (error) {
+            console.error('Failed to fetch products:', error);
+            productGrid.innerHTML = `<div class="loading">Could not load products. Please try again later.</div>`;
+        }
+    }
+    
+    function generateStars(rating) {
+        rating = rating || 0;
+        let starsHtml = '';
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.4 ? 1 : 0;
+        const emptyStars = 5 - fullStars - halfStar;
+        for (let i = 0; i < fullStars; i++) starsHtml += '<i class="fas fa-star"></i>';
+        if (halfStar) starsHtml += '<i class="fas fa-star-half-alt"></i>';
+        for (let i = 0; i < emptyStars; i++) starsHtml += '<i class="far fa-star"></i>';
+        return starsHtml;
+    }
+
+    function renderArtisans(artisanList) {
+        artisanGrid.innerHTML = '';
+        if (artisanList.length === 0) {
+            artisanGrid.innerHTML = `<div class="loading">No artisans found.</div>`;
+            return;
+        }
+        artisanList.forEach((artisan, index) => {
+            // Priority: Profile Image > Video > Placeholder
+            const hasProfileImage = !!artisan.profile_image_id;
+            const hasVideo = !!artisan.video_id;
+            let mediaElement = '';
+
+            if (hasProfileImage) {
+                mediaElement = `<img src="/image/${artisan.profile_image_id}" alt="${artisan.shopname}" class="artisan-image">`;
+            } else if (hasVideo) {
+                mediaElement = `<video src="/video/${artisan.video_id}" class="artisan-image" autoplay muted loop playsinline></video>`;
+            } else {
+                mediaElement = `<img src="${placeholderImages[index % placeholderImages.length]}" alt="${artisan.shopname}" class="artisan-image">`;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'artisan-card';
+            card.innerHTML = `
+                <div class="image-section">
+                    ${mediaElement}
+                    <a href="/artisan-profile?id=${artisan._id}" class="view-btn">About Artisan</a>
+                </div>
+                <div class="info-section">
+                    <div>
+                        <h3 class="shop-name">${artisan.shopname || 'Unnamed Shop'}</h3>
+                        <p class="shop-desc">By: <strong>${artisan.fullname || 'An Artisan'}</strong></p>
+                        
+                        <div class="rating-section" onclick="rateArtisan('${artisan._id}', ${artisan.rating || 0}, ${artisan.ratingCount || 0})">
+                            <span class="stars">${generateStars(artisan.rating)}</span>
+                            <span class="rating-count">(${artisan.ratingCount || 0} reviews)</span>
+                        </div>
+                        
+                        <div class="artisan-story">"${artisan.story || 'Every piece tells a story of heritage.'}"</div>
+                        <div class="address"><i class="fas fa-map-marker-alt"></i>${artisan.address || 'Location not available'}</div>
+                    </div>
+                    <div class="button-container">
+                        <a href="tel:${artisan.contactNumber}" class="locate-btn" style="${!artisan.contactNumber ? 'display:none;' : ''}">
+                            <i class="fas fa-phone"></i> Call Artisan
+                        </a>
+                        <button class="locate-btn" onclick="locateArtisan('${artisan._id}')" id="locate-${artisan._id}" ${!artisan.geolocation ? 'disabled' : ''}>
+                            <i class="fas fa-location-arrow"></i> Locate Me
+                        </button>
+                    </div>
+                </div>`;
+            artisanGrid.appendChild(card);
+        });
+    }
+
+    function renderProducts(productList) {
+        productGrid.innerHTML = '';
+        if (productList.length === 0) {
+            productGrid.innerHTML = `<div class="loading">No products found yet.</div>`;
+            return;
+        }
+        productList.forEach(product => {
+            if (product.carouselIdx === undefined) product.carouselIdx = 0;
+            const firstImage = product.image_ids.length > 0 ? `/image/${product.image_ids[product.carouselIdx]}` : 'https://via.placeholder.com/400x300.png?text=No+Image';
+            
+            let dotsHtml = product.image_ids.length > 1 ? product.image_ids.map((id, i) => 
+                `<span class="carousel-dot ${i === product.carouselIdx ? 'active' : ''}" onclick="goToImg('${product._id}', ${i})"></span>`
+            ).join('') : '';
+
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="carousel-container">
+                    ${product.image_ids.length > 1 ? `<button class="carousel-arrow left" onclick="prevImg('${product._id}')">⇦</button>` : ''}
+                    <img src="${firstImage}" alt="${product.name}" class="carousel-img" id="prod-img-${product._id}">
+                    ${product.image_ids.length > 1 ? `<button class="carousel-arrow right" onclick="nextImg('${product._id}')">⇨</button>` : ''}
+                    <div class="carousel-dots" id="dots-${product._id}">${dotsHtml}</div>
+                </div>
+                <div class="info-section">
+                    <div>
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-desc">${product.description}</p>
+                        <div class="product-price">₹${Number(product.price).toLocaleString()}</div>
+                        <div class="address"><i class="fas fa-store"></i> ${product.shopname || 'Artisan Shop'}</div>
+                    </div>
+<div class="button-container">
+     <button class="locate-btn" style="width: 65%;" onclick="showContactDetails('${product._id}', '${product.shopname || 'Artisan Shop'}', '${product.contactNumber || 'Not Available'}', '${product.name || 'Unnamed Product'}')">
+        <i class="fas fa-shopping-cart"></i> Buy Now
+    </button>
+</div>
+                </div>`;
+            productGrid.appendChild(card);
+        });
+    }
+
+    // --- UI & INTERACTIVITY ---
+    function showArtisans() {
+        document.getElementById('artisansBtn').classList.add('active');
+        document.getElementById('productsBtn').classList.remove('active');
+        artisanGrid.style.display = 'grid';
+        productGrid.style.display = 'none';
+    }
+
+    function showProducts() {
+        document.getElementById('artisansBtn').classList.remove('active');
+        document.getElementById('productsBtn').classList.add('active');
+        artisanGrid.style.display = 'none';
+        productGrid.style.display = 'grid';
+        fetchAllProducts();
+    }
+    
+    function performSearch() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        if (document.getElementById('artisansBtn').classList.contains('active')) {
+            const filtered = allArtisans.filter(a =>
+                (a.shopname && a.shopname.toLowerCase().includes(searchTerm)) ||
+                (a.fullname && a.fullname.toLowerCase().includes(searchTerm)) ||
+                (a.address && a.address.toLowerCase().includes(searchTerm))
+            );
+            renderArtisans(filtered);
+        } else {
+            const filtered = allProducts.filter(p =>
+                (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+                (p.description && p.description.toLowerCase().includes(searchTerm)) ||
+                (p.shopname && p.shopname.toLowerCase().includes(searchTerm))
+            );
+            renderProducts(filtered);
+        }
+    }
+    
+    async function rateArtisan(artisanId, currentRating, ratingCount) {
+        const newRatingStr = prompt(`This artisan has a rating of ${currentRating.toFixed(1)} from ${ratingCount} reviews.\n\nPlease enter your rating (1-5):`);
+        if (!newRatingStr) return; // User cancelled
+
+        const newRating = parseFloat(newRatingStr);
+        if (isNaN(newRating) || newRating < 1 || newRating > 5) {
+            return alert('Invalid rating. Please enter a number between 1 and 5.');
+        }
+
+        try {
+            const response = await fetch(`/api/artisans/${artisanId}/rate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: newRating })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+
+            alert('Thank you for your rating!');
+            
+            const artisanInList = allArtisans.find(a => a._id === artisanId);
+            if (artisanInList) {
+                artisanInList.rating = result.newRating;
+                artisanInList.ratingCount = result.ratingCount;
+                renderArtisans(allArtisans); 
+            }
+        } catch (error) {
+            console.error('Failed to submit rating:', error);
+            alert(`Could not submit rating: ${error.message}`);
+        }
+    }
+
+    // --- PRODUCT CARD HELPERS ---
+    function prevImg(pid) { const p = allProducts.find(x => x._id === pid); if (!p) return; p.carouselIdx = (p.carouselIdx - 1 + p.image_ids.length) % p.image_ids.length; document.getElementById(`prod-img-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateDots(pid); }
+    function nextImg(pid) { const p = allProducts.find(x => x._id === pid); if (!p) return; p.carouselIdx = (p.carouselIdx + 1) % p.image_ids.length; document.getElementById(`prod-img-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateDots(pid); }
+    function goToImg(pid, idx) { const p = allProducts.find(x => x._id === pid); if (!p) return; p.carouselIdx = idx; document.getElementById(`prod-img-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateDots(pid); }
+    function updateDots(pid) { const p = allProducts.find(x => x._id === pid); if (!p) return; const dotsContainer = document.getElementById(`dots-${pid}`); if(dotsContainer) { const dots = dotsContainer.querySelectorAll('.carousel-dot'); dots.forEach((dot, index) => dot.classList.toggle('active', index === p.carouselIdx)); } }
+
+    // --- MAP AND ROUTING LOGIC ---
+    async function locateArtisan(artisanId) {
+        const artisan = allArtisans.find(a => a._id === artisanId);
+        if (!artisan || !artisan.geolocation) return alert('Location data not available.');
+        const btn = document.getElementById(`locate-${artisan._id}`);
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...';
+        try {
+            const [lat, lng] = artisan.geolocation.split(',').map(Number);
+            if (isNaN(lat) || isNaN(lng)) throw new Error('Invalid location format');
+            await openMapModal({ shopName: artisan.shopname, lat, lng });
+        } catch (error) {
+            alert('Could not process location.'); console.error(error);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-location-arrow"></i> Locate Me';
+        }
+    }
+    function getUserLocation() { return new Promise((resolve, reject) => { if (!navigator.geolocation) return reject(new Error('Geolocation is not supported.')); navigator.geolocation.getCurrentPosition(pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }), reject); }); }
+    async function getRoute(start, end) { const response = await fetch(`https://api.openrouteservice.org/v2/directions/driving-car/geojson`, { method: 'POST', headers: { 'Authorization': ORS_API_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ coordinates: [[start.lng, start.lat], [end.lng, end.lat]] }) }); if (!response.ok) throw new Error('Failed to fetch route'); return response.json(); }
+    function initMap() { if (map) map.remove(); map = L.map('map').setView([20.5937, 78.9629], 5); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map); }
+    async function plotRoute(userLoc, artisanLoc, artisanName) { const routeData = await getRoute(userLoc, artisanLoc); if (!routeData.features || !routeData.features.length) throw new Error('No route found'); const route = routeData.features[0]; const latLngs = route.geometry.coordinates.map(coord => [coord[1], coord[0]]); const routeLine = L.polyline(latLngs, { color: '#b22222', weight: 5 }).addTo(map); L.marker([userLoc.lat, userLoc.lng]).bindPopup('Your Location').addTo(map); L.marker([artisanLoc.lat, artisanLoc.lng]).bindPopup(artisanName).addTo(map); map.fitBounds(routeLine.getBounds().pad(0.1)); const segment = route.properties.segments[0]; const distKm = (segment.distance / 1000).toFixed(1); const durMin = Math.round(segment.duration / 60); document.getElementById('routeInfo').innerHTML = `Distance: ${distKm} km | Approx. ${durMin} minutes`; document.getElementById('routeInfo').style.display = 'block'; }
+    async function openMapModal(artisanLocation) { document.getElementById('mapModal').style.display = 'block'; initMap(); const routeInfoEl = document.getElementById('routeInfo'); routeInfoEl.innerHTML = '<div class="spinner"></div>Loading route...'; routeInfoEl.style.display = 'block'; try { if (!currentUserLocation) currentUserLocation = await getUserLocation(); await plotRoute(currentUserLocation, artisanLocation, artisanLocation.shopName); } catch (error) { console.error('Routing Error:', error.message); alert('Could not calculate the route. Showing artisan location only.'); map.eachLayer(layer => { if (layer instanceof L.Marker || layer instanceof L.Polyline) map.removeLayer(layer); }); L.marker([artisanLocation.lat, artisanLocation.lng]).bindPopup(artisanLocation.shopName).addTo(map); map.setView([artisanLocation.lat, artisanLocation.lng], 13); routeInfoEl.style.display = 'none'; } }
+    function closeMapModal() { document.getElementById('mapModal').style.display = 'none'; if (map) { map.remove(); map = null; } }
+
+function showContactDetails(productId, shopName, contactNumber, productName) {
+    try {
+        console.log('Opening contact modal for:', shopName);
+        
+        // Find the product to get its description
+        const product = allProducts.find(p => p._id === productId);
+        let description = 'No description available';
+        if (product) {
+            description = product.description;
+        }
+
+        // Set the modal content
+        document.getElementById('modalShopName').innerText = `Shop: ${shopName}`;
+        document.getElementById('modalProductDescription').innerText = `Product: ${productName}\n\n${description}`;
+        document.getElementById('modalContactNumber').innerText = `Contact: ${contactNumber}`;
+        document.getElementById('contactModal').style.display = 'block';
+
+        console.log('Contact modal opened successfully');
+    } catch (error) {
+        console.error('Error opening contact modal:', error);
+        alert('Error opening contact details. Please try again.');
+    }
+}
+    function closeContactModal() {
+        document.getElementById('contactModal').style.display = 'none';
+    }
+
+    // --- EVENT LISTENERS & INITIAL LOAD ---
+    document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); performSearch(); } });
+    window.addEventListener('click', (e) => {
+        if (e.target == document.getElementById('mapModal')) closeMapModal();
+        if (e.target == document.getElementById('contactModal')) closeContactModal();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAllArtisans();
+        getUserLocation().then(loc => currentUserLocation = loc).catch(err => console.log("User location not pre-fetched."));
+    });
+    </script>
+</body>
+</html>

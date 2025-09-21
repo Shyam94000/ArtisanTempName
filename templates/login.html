@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artisan Login - Artisan Collective</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bg-waves {
+      position: absolute;
+      width: 100vw;
+      left: 0; top: 0;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .login-container {
+      background: rgba(255,255,255,0.92);
+      padding: 3rem;
+      border-radius: 26px;
+      box-shadow: 0 10px 40px rgba(178,34,34,0.16);
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 1s cubic-bezier(.17,.67,.83,.67) forwards;
+      opacity: 0;
+      top: 24px;
+    }
+    @keyframes fadeInUp {
+      to {opacity:1; top:0;}
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #b22222;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #313131;
+      letter-spacing: 0.1px;
+    }
+    input {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1rem;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background: #faf6f9;
+    }
+    input:focus {
+      outline: none;
+      border-color: #b22222;
+      box-shadow: 0 0 0 2px #f2a0c190;
+      background: #fff;
+    }
+    .show-password-btn {
+      position: absolute;
+      right: 18px; top: 57%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: #b22222;
+      cursor: pointer;
+      z-index: 2;
+      outline: none;
+    }
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #b22222 55%, #fcb1b1 100%);
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 1.16rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.23s, box-shadow 0.3s;
+      box-shadow: 0 7px 30px -8px #b2222240;
+      margin-top: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+    .login-btn:hover {
+      background: linear-gradient(90deg, #fcb1b1 15%, #b22222 100%);
+      box-shadow: 0 12px 32px -12px #b2222244;
+    }
+    .login-info {
+      text-align: center;
+      color: #c6510c;
+      margin-top: 1.6rem;
+      font-size: 0.98rem;
+      font-weight: 500;
+      opacity: 0.85;
+      letter-spacing: 0.01em;
+    }
+    @media (max-width: 500px) {
+      .login-container {
+        padding: 2rem 0.9rem;
+        min-width: unset;
+        box-shadow: 0 7px 20px #b2222240;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-waves">
+    <svg viewBox="0 0 1440 540" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100vw;height:100vh;">
+      <path fill="#fff5ea" fill-opacity=".8">
+        <animate attributeName="d" dur="9s" repeatCount="indefinite"
+          values="M0,160Q360,280,720,110Q1080,-90,1440,150L1440,540L0,540Z;
+                  M0,90Q360,210,720,210Q1080,210,1440,110L1440,540L0,540Z;
+                  M0,160Q320,120,720,210Q1200,350,1440,160L1440,540L0,540Z;
+                  M0,160Q360,280,720,110Q1080,-90,1440,150L1440,540L0,540Z"/>
+      </path>
+      <path fill="#eec3d0" fill-opacity=".73">
+        <animate attributeName="d" dur="11s" repeatCount="indefinite"
+          values="M0,80 Q350,280 720,110 Q1100,-70 1440,170 L1440,540 L0,540Z;
+                  M0,170 Q360,110 700,230 Q1200,350 1440,120 L1440,540 L0,540Z;
+                  M0,80 Q350,280 720,110 Q1100,-70 1440,170 L1440,540 L0,540Z"/>
+      </path>
+    </svg>
+  </div>
+  <div class="login-container">
+    <div class="logo">Artisan Collective</div>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
+      <div class="form-group" style="margin-bottom:2.2rem;">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+        <button type="button" class="show-password-btn" tabindex="-1" onclick="togglePassword()">
+          <span id="eyeIcon"><i class="fas fa-eye"></i></span>
+        </button>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+      <div class="login-info">Welcome! Please log in to access your artisan dashboard.</div>
+    </form>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+  <script>
+    function togglePassword() {
+      const pass = document.getElementById('password');
+      const icon = document.getElementById('eyeIcon');
+      if (pass.type === 'password') {
+        pass.type = 'text';
+        icon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+      } else {
+        pass.type = 'password';
+        icon.innerHTML = '<i class="fas fa-eye"></i>';
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const infoDiv = document.querySelector('.login-info');
+      infoDiv.textContent = 'Logging in...';
+      infoDiv.style.color = '#313131';
+
+      const payload = { username, password };
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          infoDiv.textContent = data.message;
+          infoDiv.style.color = 'green';
+          setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
+        } else {
+          infoDiv.textContent = data.message;
+          infoDiv.style.color = '#c6510c';
+        }
+      } catch (error) {
+        console.error('Login Error:', error);
+        infoDiv.textContent = 'Cannot connect to the server. Please try again later.';
+        infoDiv.style.color = '#c6510c';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('.login-container').style.opacity = 1;
+    });
+  </script>
+</body>
+</html>

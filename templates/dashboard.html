@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Artisan Dashboard - Artisan Collective</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f1eb 0%, #faf6f0 100%);
+      min-height: 100vh;
+    }
+    .header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      color: #b22222;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .header-right {
+      display: flex;
+      gap: 1rem;
+    }
+    .header-btn {
+      background: #b22222;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+    .header-btn:hover {
+      background: #8b1818;
+    }
+    .header-btn.secondary {
+      background: transparent;
+      color: #b22222;
+      border: 2px solid #b22222;
+    }
+    .header-btn.secondary:hover {
+      background: #b22222;
+      color: white;
+    }
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 80px;
+      height: calc(100vh - 80px);
+      width: 250px;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      padding: 2rem 0;
+    }
+    .sidebar-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 1rem 2rem;
+      text-align: left;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .sidebar-btn:hover,
+    .sidebar-btn.active {
+      background: #f5f5f5;
+      color: #b22222;
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 2rem;
+    }
+    .welcome {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .welcome h1 {
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    /* Product card with 3/4 image */
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 430px;
+      position: relative;
+      transition: box-shadow 0.25s;
+    }
+    .product-card:hover {
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    .carousel-container {
+      height: 70%;
+      background: #f6e7db;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(178,34,34,0.8);
+      border: none;
+      color: #fff;
+      font-size: 1.7em;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.2s;
+      opacity: 0.82;
+    }
+    .carousel-arrow:hover { background: #8b1818; }
+    .carousel-arrow.left { left: 10px; }
+    .carousel-arrow.right { right: 10px; }
+    
+    /* Image indicator dots */
+    .carousel-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .carousel-dot.active {
+      background: rgba(255,255,255,0.9);
+    }
+    
+    /* Info section */
+    .product-info {
+      padding: 1rem 1.1rem 0.9rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      height: 30%;
+      justify-content: space-between;
+    }
+    .product-name {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #b22222;
+      margin-bottom: 0.2rem;
+    }
+    .product-desc {
+      color: #666;
+      margin-bottom: 0.5rem;
+      font-size: 0.93rem;
+      line-height: 1.3;
+      flex: 1;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .product-price {
+      font-size: 1.1rem;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+    .edit-product-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: #ffa600;
+      color: #fff;
+      border: none;
+      padding: 0.35rem 0.9rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+    .edit-product-btn:hover { background: #d18400; }
+    /* Sliding Panels */
+    .sliding-panel {
+      position: fixed;
+      top: 80px;
+      height: calc(100vh - 80px);
+      width: 400px;
+      background: white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+    .sliding-panel.left {
+      left: 0;
+      transform: translateX(-100%);
+    }
+    .sliding-panel.right {
+      right: 0;
+      transform: translateX(100%);
+    }
+    .sliding-panel.show {
+      transform: translateX(0);
+    }
+    .panel-header {
+      background: #b22222;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .close-panel {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .panel-content {
+      padding: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .voice-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .voice-btn.listening { background: #dc3545; animation: pulse 1s infinite;}
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.7;} }
+    .generate-btn,.save-btn {
+      background: #b22222;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 1rem;
+      transition: background 0.3s;
+    }
+    .generate-btn:hover,.save-btn:hover { background: #8b1818; }
+    .images-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .images-preview-container img {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 7px;
+      border: 2px solid #eee;
+      background: #faf6f0;
+    }
+    .generated-story {
+      background: rgba(178, 34, 34, 0.05);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 3px solid #b22222;
+      margin-top: 1rem;
+      display: none;
+      font-style: italic;
+    }
+    .language-buttons {display:flex;gap:0.5rem;margin-top:0.5rem;display:none;}
+    .lang-btn {
+      padding: 0.4rem 0.8rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .lang-btn.active { background: #28a745; }
+    .overlay {
+      position: fixed;top: 0;left: 0;width: 100%;height: 100%;
+      background: rgba(0,0,0,0.5);z-index: 999;display: none;
+    }
+    .overlay.show { display: block; }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%);}
+      .main-content { margin-left: 0;}
+      .sliding-panel { width: 95%;}
+      .product-card { height: 390px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">Artisan Dashboard</div>
+    <div class="header-right">
+      <button class="header-btn secondary" onclick="openEditProfile()">
+        <i class="fas fa-edit"></i> Edit Profile
+      </button>
+      <button class="header-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button class="sidebar-btn active" onclick="openUploadProduct()">
+      <i class="fas fa-plus"></i> Upload Product
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="welcome">
+      <h1>Welcome back!</h1>
+      <p>Manage your products and profile</p>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <!-- Products will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Upload Product Panel (Left) -->
+  <div class="sliding-panel left" id="uploadPanel">
+    <div class="panel-header">
+      <h3 id="uploadPanelTitle">Upload New Product</h3>
+      <button class="close-panel" type="button" onclick="closeUploadPanel()">&times;</button>
+    </div>
+    <div class="panel-content">
+      <form id="uploadForm">
+        <div class="form-group">
+          <label>Product Name</label>
+          <input type="text" id="productName" placeholder="Product name" required>
+        </div>
+        <div class="form-group">
+          <label>Product Images (Multiple allowed)</label>
+          <input type="file" id="productImages" accept="image/*" multiple onchange="previewImages(this)">
+          <div class="images-preview-container" id="imagesPreview"></div>
+        </div>
+        <div class="form-group">
+          <label>Product Description</label>
+          <div style="display: flex; align-items: flex-end; gap: 0.5rem;">
+            <textarea id="productDesc" placeholder="Describe your product..." required style="flex: 1;"></textarea>
+            <button type="button" class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">🎤</button>
+          </div>
+        </div>
+        <button type="button" class="generate-btn" onclick="generateStory()">Generate Full Description</button>
+        <div class="generated-story" id="generatedStory"></div>
+        <div class="language-buttons" id="langButtons">
+          <button type="button" class="lang-btn active" data-lang="en">English</button>
+          <button type="button" class="lang-btn" data-lang="hi">Hindi</button>
+          <button type="button" class="lang-btn" data-lang="ta">Tamil</button>
+        </div>
+        <div class="form-group">
+          <label>Product Price (₹)</label>
+          <input type="number" id="productPrice" placeholder="Enter price" required>
+        </div>
+        <button type="submit" class="save-btn" id="saveProductBtn">Upload Product</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Profile Panel (Right) -->
+  <div class="sliding-panel right" id="editProfilePanel">
+    <div class="panel-header">
+      <h3>Edit Profile</h3>
+      <button class="close-panel" type="button" onclick="closeEditProfile()">&times;</button>
+    </div>
+    <div class="panel-content">
+      <form onsubmit="saveProfile(event)">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="editName" value="Priya Sharma" required>
+        </div>
+        <div class="form-group">
+          <label>Shop Name</label>
+          <input type="text" id="editShop" value="Priya's Traditional Weaves" required>
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <textarea id="editAddress" required>Varanasi, Uttar Pradesh, India</textarea>
+        </div>
+        <div class="form-group">
+          <label>Geolocation</label>
+          <input type="text" id="editGeo" value="25.3176, 82.9739" readonly>
+        </div>
+        <div class="form-group">
+          <label>Your Story</label>
+          <textarea id="editStory" required>My grandmother taught me the ancient art of weaving...</textarea>
+        </div>
+        <button type="submit" class="save-btn">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+ <script>
+    // --- DYNAMIC ARTISAN DASHBOARD SCRIPT ---
+
+    let myProducts = [];
+    let editingProductId = null;
+    let imagesToUpload = [];
+    let recognition;
+    let isListening = false;
+    
+    // --- API COMMUNICATION ---
+
+    async function fetchMyProducts() {
+        try {
+            const response = await fetch('/api/my-products');
+            if (!response.ok) {
+                if(response.status === 401) window.location.href = '/login';
+                throw new Error('Could not fetch products.');
+            }
+            myProducts = await response.json();
+            renderProducts();
+        } catch (error) {
+            console.error('Fetch products error:', error);
+            document.getElementById('productsGrid').innerHTML = '<p>Could not load your products.</p>';
+        }
+    }
+
+    async function fetchMyProfile() {
+        try {
+            const response = await fetch('/api/profile');
+            if (!response.ok) throw new Error('Could not fetch profile.');
+            const profile = await response.json();
+
+            // Populate welcome message and profile form
+            document.querySelector('.welcome h1').textContent = `Welcome back, ${profile.fullname}!`;
+            document.getElementById('editName').value = profile.fullname || '';
+            document.getElementById('editShop').value = profile.shopname || '';
+            document.getElementById('editAddress').value = profile.address || '';
+            document.getElementById('editGeo').value = profile.geolocation || '';
+            document.getElementById('editStory').value = profile.story || '';
+        } catch (error) {
+            console.error('Fetch profile error:', error);
+        }
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const saveBtn = document.getElementById('saveProductBtn');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+
+        const formData = new FormData();
+        formData.append('name', document.getElementById('productName').value);
+        formData.append('description', document.getElementById('productDesc').value);
+        formData.append('price', document.getElementById('productPrice').value);
+        
+        // Append all selected files for upload
+        const imageInput = document.getElementById('productImages');
+        for (const file of imageInput.files) {
+            formData.append('productImages', file);
+        }
+
+        try {
+            const url = editingProductId ? `/api/products/${editingProductId}` : '/api/products';
+            const method = editingProductId ? 'PUT' : 'POST';
+
+            // NOTE: We don't set Content-Type header when using FormData, browser does it.
+            const response = await fetch(url, {
+                method: method,
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Product saved successfully!');
+                closeUploadPanel();
+                fetchMyProducts(); // Refresh the product list
+            } else {
+                alert(`Error: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('An error occurred during upload. Please try again.');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Upload Product';
+        }
+    });
+
+    async function saveProfile(event) {
+        event.preventDefault();
+        const profileData = {
+            fullname: document.getElementById('editName').value,
+            shopname: document.getElementById('editShop').value,
+            address: document.getElementById('editAddress').value,
+            story: document.getElementById('editStory').value,
+        };
+        
+        try {
+            const response = await fetch('/api/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData)
+            });
+            const result = await response.json();
+            alert(result.message);
+            if(response.ok) {
+                closeEditProfile();
+                fetchMyProfile(); // Refresh welcome message etc.
+            }
+        } catch (error) {
+            alert('Failed to update profile.');
+        }
+    }
+
+    // --- UI RENDERING & HELPERS (some functions are simplified or removed as they are not needed for backend integration yet) ---
+
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+        if (myProducts.length === 0) {
+            grid.innerHTML = "<p>You haven't uploaded any products yet. Click 'Upload Product' to start.</p>";
+            return;
+        }
+
+        myProducts.forEach(product => {
+            // Assign a carousel index to the product object if it doesn't have one
+            if (product.carouselIdx === undefined) product.carouselIdx = 0;
+
+            const firstImage = product.image_ids.length > 0 ? `/image/${product.image_ids[product.carouselIdx]}` : 'https://via.placeholder.com/400x300.png?text=No+Image';
+
+            let dotsHtml = '';
+            if (product.image_ids.length > 1) {
+                dotsHtml = product.image_ids.map((id, i) => 
+                    `<span class="carousel-dot ${i === product.carouselIdx ? 'active' : ''}" onclick="goToImage('${product._id}', ${i})"></span>`
+                ).join('');
+            }
+
+            grid.innerHTML += `
+            <div class="product-card">
+                <button class="edit-product-btn" onclick="openEditProduct('${product._id}')"><i class="fas fa-edit"></i></button>
+                <div class="carousel-container" id="carousel-${product._id}">
+                    ${product.image_ids.length > 1 ? `<button class="carousel-arrow left" onclick="prevImage('${product._id}')">&#8678;</button>` : ''}
+                    <img src="${firstImage}" alt="${product.name}" class="carousel-img" id="carousel-image-${product._id}">
+                    ${product.image_ids.length > 1 ? `<button class="carousel-arrow right" onclick="nextImage('${product._id}')">&#8680;</button>` : ''}
+                    <div class="carousel-dots">${dotsHtml}</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-desc">${product.description}</div>
+                    <div class="product-price">₹${Number(product.price).toLocaleString()}</div>
+                </div>
+            </div>`;
+        });
+    }
+
+    function updateCarouselDots(productId) {
+        const product = myProducts.find(p => p._id === productId);
+        if (!product || product.image_ids.length <= 1) return;
+        const dotsContainer = document.querySelector(`#carousel-${productId} .carousel-dots`);
+        if (dotsContainer) {
+            dotsContainer.innerHTML = product.image_ids.map((id, i) => 
+                `<span class="carousel-dot ${i === product.carouselIdx ? 'active' : ''}" onclick="goToImage('${product._id}', ${i})"></span>`
+            ).join('');
+        }
+    }
+
+    function prevImage(pid) { const p = myProducts.find(p => p._id === pid); if (!p) return; p.carouselIdx = (p.carouselIdx - 1 + p.image_ids.length) % p.image_ids.length; document.getElementById(`carousel-image-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateCarouselDots(pid); }
+    function nextImage(pid) { const p = myProducts.find(p => p._id === pid); if (!p) return; p.carouselIdx = (p.carouselIdx + 1) % p.image_ids.length; document.getElementById(`carousel-image-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateCarouselDots(pid); }
+    function goToImage(pid, index) { const p = myProducts.find(p => p._id === pid); if (!p) return; p.carouselIdx = index; document.getElementById(`carousel-image-${pid}`).src = `/image/${p.image_ids[p.carouselIdx]}`; updateCarouselDots(pid); }
+    
+    // --- PANEL & FORM MANAGEMENT ---
+
+    function openEditProduct(productId) {
+        const product = myProducts.find(p => p._id === productId);
+        if (!product) return;
+
+        editingProductId = productId;
+
+        document.getElementById('uploadPanelTitle').textContent = 'Edit Product';
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productDesc').value = product.description;
+        document.getElementById('productPrice').value = product.price;
+        
+        const imagesPreview = document.getElementById('imagesPreview');
+        imagesPreview.innerHTML = '';
+        product.image_ids.forEach(imageId => {
+            imagesPreview.innerHTML += `<img src="/image/${imageId}" style="width: 80px; height: 60px; object-fit: cover; border-radius: 7px;">`;
+        });
+
+        document.getElementById('saveProductBtn').textContent = 'Save Changes';
+        document.getElementById('uploadPanel').classList.add('show');
+        document.getElementById('overlay').classList.add('show');
+    }
+    
+    function openUploadProduct() { 
+        editingProductId = null;
+        resetUploadForm(); 
+        document.getElementById('uploadPanelTitle').textContent = 'Upload New Product';
+        document.getElementById('saveProductBtn').textContent = 'Upload Product';
+        document.getElementById('uploadPanel').classList.add('show'); 
+        document.getElementById('overlay').classList.add('show'); 
+    }
+    function closeUploadPanel() { document.getElementById('uploadPanel').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); resetUploadForm(); }
+    function openEditProfile() { document.getElementById('editProfilePanel').classList.add('show'); document.getElementById('overlay').classList.add('show'); }
+    function closeEditProfile() { document.getElementById('editProfilePanel').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
+    function closeAllPanels() { document.querySelectorAll('.sliding-panel').forEach(p => p.classList.remove('show')); document.getElementById('overlay').classList.remove('show'); resetUploadForm(); }
+    function resetUploadForm() { document.getElementById('uploadForm').reset(); document.getElementById('imagesPreview').innerHTML = ''; imagesToUpload = []; }
+    function previewImages(input) { let p = document.getElementById('imagesPreview'); p.innerHTML = ''; if (input.files) { Array.from(input.files).forEach(file => { let reader = new FileReader(); reader.onload = (e) => p.innerHTML += `<img src="${e.target.result}">`; reader.readAsDataURL(file); }); } }
+    function logout() { window.location.href = "/logout"; }
+
+    function generateStory() {
+        const productDescInput = document.getElementById('productDesc');
+        const shortDesc = productDescInput.value;
+
+        if (shortDesc.trim() === '') {
+            alert('Please enter a short description first.');
+            return;
+        }
+
+        // Simulate generating a longer story
+        const generatedText = `Discover the story behind "${shortDesc}". Each piece is handcrafted with passion and dedication, reflecting a rich cultural heritage. This unique item is not just a product, but a piece of art that carries the artisan's soul. Made with the finest materials, it promises quality and authenticity. Bring home a masterpiece that will be cherished for generations.`;
+
+        const storyContainer = document.getElementById('generatedStory');
+        storyContainer.textContent = generatedText;
+        storyContainer.style.display = 'block';
+        productDescInput.value = generatedText;
+
+        // Also show language buttons
+        document.getElementById('langButtons').style.display = 'flex';
+    }
+
+    function toggleVoiceInput() {
+        alert('Voice input feature is coming soon!');
+    }
+
+    // --- INITIAL LOAD ---
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchMyProducts();
+        fetchMyProfile();
+    });
+</script>
+</body>
+</html>

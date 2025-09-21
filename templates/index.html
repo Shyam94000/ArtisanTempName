@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Artisan Collective - Empowering Traditional Crafts</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!-- FontAwesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<style>
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+.artisan-login-btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: #b22222;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+.artisan-login-btn:hover {
+  background: #a01d1d;
+}
+
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 25%, #ff9ff3 50%, #54a0ff 75%);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Navbar - Nykaa Style */
+  nav.navbar {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  nav .container {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 2rem;
+  }
+  
+  nav .logo {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-weight: 700; font-size: 1.6rem;
+    color: #ff6b6b;
+    user-select: none;
+  }
+  
+  nav .logo i {
+    font-size: 2rem;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  nav ul {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  
+  nav ul li a {
+    color: #333;
+    font-weight: 600;
+    font-size: 1rem;
+    position: relative;
+    padding: 0.5rem 0;
+  }
+  
+  nav ul li a:hover,
+  nav ul li a.active {
+    color: #ff6b6b;
+  }
+  
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    transition: width 0.3s ease;
+  }
+  
+  nav ul li a:hover::after {
+    width: 100%;
+  }
+  
+  /* Dropdown */
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropbtn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .dropbtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+  }
+
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0; top: 120%;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 10;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  .dropdown-content a {
+    padding: 15px 20px;
+    display: flex; align-items: center; gap: 12px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .dropdown-content a:hover {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeInDown 0.3s ease;
+  }
+  
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Hero Section - Fashion Website Style */
+  /* ...existing code... */
+/* ...existing code... */
+.hero {
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  margin-top: 80px;
+  /* Updated URL to use your local file */
+  background: url('./images/img1.jpg') center/cover;
+  border-radius: 0 0 50px 50px;
+  overflow: hidden;
+}
+/* ...existing code... */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: none;
+  z-index: 1;
+}
+/* ...existing code... */
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 800px;
+    padding: 0 2rem;
+  }
+  
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    background: linear-gradient(45deg, #fff, #ffeaa7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slideInUp 1s ease;
+  }
+  
+  .hero p {
+    font-size: 1.4rem;
+    margin-bottom: 2.5rem;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+    animation: slideInUp 1s ease 0.2s both;
+  }
+  
+  .btn-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: slideInUp 1s ease 0.4s both;
+    
+  }
+  
+  .btn-primary, .btn-secondary {
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255,107,107,0.4);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255,107,107,0.5);
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    backdrop-filter: blur(10px);
+  }
+  
+  .btn-secondary:hover {
+    background: white;
+    color: #ff6b6b;
+    transform: translateY(-3px);
+  }
+  
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* USP Section - Card Grid */
+  .usp-section {
+    padding: 6rem 2rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+  }
+  
+  .usp-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+  }
+  
+  .usp-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .usp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  }
+  
+  .usp-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  
+  .usp-card .icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 8px 25px rgba(255,107,107,0.3);
+  }
+  
+  .usp-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .usp-card p {
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  /* Stats Section */
+  .stats-section {
+    padding: 4rem 2rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+  }
+  
+  .stats-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+  
+  .stat {
+    background: rgba(255,255,255,0.95);
+    padding: 2.5rem 1.5rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  }
+  
+  .stat h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat p {
+    color: #666;
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+  
+  /* Speciality Section */
+  .speciality-section {
+    padding: 6rem 2rem;
+    background: rgba(255,255,255,0.05);
+  }
+  
+  .speciality-title {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+  .speciality-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  }
+  
+  .speciality-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+  }
+  
+  .speciality-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  
+  .speciality-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  
+  .speciality-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .speciality-card:hover img {
+    transform: scale(1.05);
+  }
+  
+  .card-content {
+    padding: 2rem;
+  }
+  
+  .card-content h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: #333;
+  }
+  
+  .card-content p {
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  /* About Section */
+  .about-section {
+    padding: 6rem 2rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+  }
+  
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  
+  .about-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: white;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  }
+  
+  .about-text p {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+  
+  .features {
+    margin-top: 2rem;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    color: rgba(255,255,255,0.9);
+  }
+  
+  .feature i {
+    font-size: 1.5rem;
+    color: #ff6b6b;
+  }
+  
+  .about-image img {
+    width: 100%;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+  }
+  
+  /* Footer */
+  footer {
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(20px);
+    color: white;
+    padding: 4rem 2rem 2rem;
+  }
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+  }
+  
+  .footer-col h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #ff6b6b;
+  }
+  
+  .footer-col ul {
+    list-style: none;
+  }
+  
+  .footer-col ul li {
+    margin-bottom: 0.8rem;
+  }
+  
+  .footer-col ul li a {
+    color: rgba(255,255,255,0.8);
+    transition: color 0.3s ease;
+  }
+  
+  .footer-col ul li a:hover {
+    color: #ff6b6b;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .social-links a {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+  }
+  
+  .social-links a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+  }
+  
+  .copyright {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+  }
+  
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .hero h1 { font-size: 2.5rem; }
+    .about-container { grid-template-columns: 1fr; }
+    .usp-container, .stats-container { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-palette"></i>
+      Artisan Collective
+    </div>
+    <ul>
+      <li><a href="#home" class="nav-link active">Home</a></li>
+      <li><a href="#speciality" class="nav-link">Speciality</a></li>
+      <li><a href="#about" class="nav-link">About Us</a></li>
+    </ul>
+    <div class="login-btn-wrapper">
+      <a href="/login" class="artisan-login-btn">
+        <i class="fas fa-hammer"></i> Artisan Login
+      </a>
+    </div>
+  </div>
+</nav>
+
+fas fa-hammer
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>Connecting Artisans to the World</h1>
+    <p>Discover authentic handcrafted treasures while empowering traditional artisans across India. Every purchase preserves heritage and transforms lives.</p>
+    <div class="btn-group">
+        <button class="btn-primary" onclick="window.location.href='/explore'">Explore Crafts</button>
+        <a href="/join" class="btn-secondary" style="text-decoration:none;">Join as Artisan</a>
+    </div>
+  </div>
+</section>
+
+<section class="usp-section">
+  <div class="usp-container">
+    <div class="usp-card">
+      <div class="icon">
+        <i class="fas fa-microphone-alt"></i>
+      </div>
+      <h3>Authentic Stories</h3>
+      <p>Listen to artisan stories in any language. AI-powered translation brings their heritage to life, creating meaningful connections between creators and customers.</p>
+    </div>
+    <div class="usp-card">
+      <div class="icon">
+        <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <h3>Workshop Discovery</h3>
+      <p>Virtually visit artisan workshops through video tours and interactive maps. Experience the crafting process from your home.</p>
+    </div>
+    <div class="usp-card">
+      <div class="icon">
+        <i class="fas fa-robot"></i>
+      </div>
+      <h3>AI-Powered Marketing</h3>
+      <p>Artisans get instant AI-generated social media posts and advertisements. Simple commands create professional content in seconds.</p>
+    </div>
+  </div>
+</section>
+
+<section class="stats-section">
+  <div class="stats-container">
+    <div class="stat">
+      <h2>2,500+</h2>
+      <p>Active Artisans</p>
+    </div>
+    <div class="stat">
+      <h2>15,000+</h2>
+      <p>Happy Customers</p>
+    </div>
+    <div class="stat">
+      <h2>50+</h2>
+      <p>Craft Categories</p>
+    </div>
+    <div class="stat">
+      <h2>28</h2>
+      <p>Indian States</p>
+    </div>
+  </div>
+</section>
+
+<section class="speciality-section" id="speciality">
+  <div class="speciality-title">
+    <h2>Our Specialities</h2>
+  </div>
+  <div class="speciality-grid">
+    <div class="speciality-card">
+      <img src="https://pashudh.com/cdn/shop/files/5_2b67733b-fb7e-461b-a228-8a3b1f358ec2.jpg?v=1687965855&width=1080" alt="Traditional Textiles">
+      <div class="card-content">
+        <h4>Traditional Textiles</h4>
+        <p>Handwoven sarees, shawls, and fabrics from master weavers across India, preserving centuries-old techniques.</p>
+      </div>
+    </div>
+    <div class="speciality-card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6SGOISj5zRnG3ddP3cr6fdA9gjH4aJrfew&s" alt="Pottery & Ceramics">
+      <div class="card-content">
+        <h4>Pottery & Ceramics</h4>
+        <p>Unique clay creations and terracotta art pieces crafted by skilled pottery artisans from rural India.</p>
+      </div>
+    </div>
+    <div class="speciality-card">
+      <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop" alt="Handmade Jewelry">
+      <div class="card-content">
+        <h4>Handmade Jewelry</h4>
+        <p>Traditional and contemporary jewelry designs featuring intricate metalwork and precious stones.</p>
+      </div>
+    </div>
+    <div class="speciality-card">
+      <img src="https://www.shutterstock.com/image-photo/round-shape-traditional-indian-wood-260nw-1989923192.jpg" alt="Wood Crafts">
+      <div class="card-content">
+        <h4>Wood Crafts</h4>
+        <p>Carved sculptures, furniture, and decorative items showcasing the finest woodworking traditions.</p>
+      </div>
+    </div>
+    <!-- ...existing code... -->
+<div class="speciality-card">
+  <img src="https://i.pinimg.com/736x/d4/ae/40/d4ae401371c3b2e6ad0d9146bdfc17b8.jpg" alt="Accessories & Other Crafts">
+  <div class="card-content">
+    <h4>Accessories & Other Crafts</h4>
+    <p>Discover handmade bags, accessories, and unique crafts from diverse artisans, blending tradition with modern style.</p>
+  </div>
+</div>
+<!-- ...existing code... -->
+  </div>
+</section>
+
+<section class="about-section" id="about">
+  <div class="about-container">
+    <div class="about-text">
+      <h2>About Artisan Collective</h2>
+      <p>Founded with a vision to bridge the gap between traditional artisans and modern consumers, Artisan Collective is more than just a marketplace—it's a cultural preservation platform.</p>
+      <p>We leverage cutting-edge AI technology to help artisans tell their stories, showcase their crafts, and reach global audiences. Our platform breaks language barriers and geographic limitations.</p>
+      <div class="features">
+        <div class="feature">
+          <i class="fas fa-users"></i>
+          <span>Empowering 2,500+ artisans across India</span>
+        </div>
+        <div class="feature">
+          <i class="fas fa-globe"></i>
+          <span>Connecting cultures through authentic crafts</span>
+        </div>
+        <div class="feature">
+          <i class="fas fa-handshake"></i>
+          <span>Ensuring fair trade and authentic products</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-image">
+      <img src="https://i0.wp.com/assets-clothroads-com.s3.amazonaws.com/uploads/2016/01/Museum-visit-W.jpg?ssl=1" alt="Artisan at work">
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-container">
+    <div class="footer-col">
+      <h3>Artisan Collective</h3>
+      <p>Connecting traditional artisans with the modern world through technology and authentic storytelling.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#speciality">Speciality</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>For Artisans</h3>
+      <ul>
+        <li><a href="#">Join Platform</a></li>
+        <li><a href="#">Success Stories</a></li>
+        <li><a href="#">Support</a></li>
+        <li><a href="#">Resources</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Categories</h3>
+      <ul>
+        <li><a href="#">Textiles</a></li>
+        <li><a href="#">Pottery</a></li>
+        <li><a href="#">Jewelry</a></li>
+        <li><a href="#">Wood Crafts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="copyright">
+    <p>&copy; 2025 Artisan Collective. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  });
+});
+
+// Active navigation highlighting
+window.addEventListener('scroll', () => {
+  let current = '';
+  const sections = document.querySelectorAll('section[id]');
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    const sectionHeight = section.clientHeight;
+    if (scrollY >= (sectionTop - 200)) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${current}`) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

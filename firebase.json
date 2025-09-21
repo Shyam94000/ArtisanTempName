@@ -1,0 +1,49 @@
+{
+  "hosting": {
+    "public": "templates",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "app.py"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/**",
+        "destination": "https://139.59.60.192:8000/api/**"
+      },
+      {
+        "source": "/video/**",
+        "destination": "https://139.59.60.192:8000/video/**"
+      },
+      {
+        "source": "/image/**",
+        "destination": "https://139.59.60.192:8000/image/**"
+      },
+      {
+        "source": "/join",
+        "destination": "/join.html"
+      },
+      {
+        "source": "/explore",
+        "destination": "/explore_artisans.html"
+      },
+      {
+        "source": "/artisan-profile",
+        "destination": "/view.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/login.html"
+      },
+      {
+        "source": "/dashboard",
+        "destination": "/dashboard.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
